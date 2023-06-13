@@ -65,6 +65,7 @@ def handle_scan_page(message):
                 n+=1
                 response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
         else:
+            return
             for part in range(len(torrents) // 10 + 1):
                 start = part * 10
                 n = start
