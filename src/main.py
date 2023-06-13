@@ -56,14 +56,15 @@ def handle_magnet(message):
 def handle_scan_page(message):
     page = message.text
     scan = account.scanPage(page)
-    if scan['result'] == True and scan['torrents'] != [] and len(scan['torrents']) < 30:
-        n = 0
-        response = 'Torrents Found :\n\n\n'
-        for torrent in scan['torrents']:
-            n+=1
-            response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
-    elif scan['result'] == True and scan['torrents'] != [] :
-        response = "The page contains too many links!!"
+    if scan['result'] == True and scan['torrents'] != [] :
+        if len(scan['torrents']) < 20:
+            n = 0
+            response = 'Torrents Found :\n\n\n'
+            for torrent in scan['torrents']:
+                n+=1
+                response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
+        else:
+            response = "The page contains too many links!!"
     else:
         response = "No magnet links found."
     bot.reply_to(message, response)
