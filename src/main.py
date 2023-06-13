@@ -47,7 +47,7 @@ def handle_magnet(message):
     magnet = message.text
     add = account.addTorrent(magnetLink=magnet)
     if add['result'] == True:
-        res = f"Torrent Added\n\n{add['title']}\nTorrent hash : {add['torrent_hash']}"
+        res = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash : {add['torrent_hash']}"
     else:
         res = f"Download failed \n\n{add['result']}"
     bot.reply_to(message, res)
