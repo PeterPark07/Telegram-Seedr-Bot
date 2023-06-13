@@ -6,7 +6,7 @@ from helper.account import account
 
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
-bot.set_webhook(url = getenv('url'))
+bot.set_webhook(url = os.getenv('url'))
 state = str(account.testToken())
 
 # Bot route to handle incoming messages
