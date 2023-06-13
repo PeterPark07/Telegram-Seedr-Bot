@@ -35,7 +35,7 @@ def handle_help(message):
 def handle_account_info(message):
     # Handle the /info command
     info = account.getSettings()['account']
-    space = round(info['space_used'] / info['space_max'], 4)*100
+    space = round(info['space_used'] / info['space_max'] * 100, 4)
     space_max = info['space_max'] / (1024 * 1024 * 1024)
     bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
     response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB"
