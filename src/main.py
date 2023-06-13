@@ -35,7 +35,7 @@ def handle_help(message):
 def handle_account_info(message):
     # Handle the /info command
     info = account.getSettings()['account']
-    space = round(info['space_used'] / info['space_max'] * 100, 4)
+    space = round(info['space_used'] / info['space_max'] * 100, 2)
     space_max = info['space_max'] / (1024 * 1024 * 1024)
     bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
     response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB"
@@ -57,9 +57,11 @@ def handle_scan_page(message):
     page = message.text
     scan = account.scanPage(page)
     if scan['result'] == True and scan['torrents'] != [] :
+        n = 0
         response = 'Torrents Found :\n\n\n'
         for torrent in scan['torrents']:
-            response+= f"{torrent['title']}\n{torrent['magnet']}\n\n"
+            n+=1
+            response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
     else:
         response = "No magnet links found."
     bot.reply_to(message, response)
