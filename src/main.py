@@ -47,10 +47,22 @@ def handle_magnet(message):
     magnet = message.text
     add = account.addTorrent(magnetLink=magnet)
     if add['result'] == True:
-        res = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash : {add['torrent_hash']}"
+        response = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash : {add['torrent_hash']}"
     else:
-        res = f"Download failed \n\n{add['result']}"
-    bot.reply_to(message, res)
+        response = f"Download failed \n\n{add['result']}"
+    bot.reply_to(message, response)
+
+@bot.message_handler(func=lambda message: message.text.startswith('http'))
+def handle_scan_page(message):
+    page = message.text
+    scan = account.scanPage(page)
+    if scan['result'] == True and scan['torrents'] != [] :
+        response = 'Torrents Found :\n\n\n'
+        for torrent in scan['torrents']:
+            response+= f"{torrent['title']}\n{torrent['magnet']}\n\n"
+    else:
+        response = f"No magnet links found.}"
+    bot.reply_to(message, response)
 
 @bot.message_handler(func=lambda message: True)
 def handle_download(message):
