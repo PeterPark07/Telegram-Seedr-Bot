@@ -35,13 +35,22 @@ def handle_help(message):
 def handle_account_info(message):
     # Handle the /info command
     info = account.getSettings()['account']
-    response = ''
     space = round(info['space_used'] / info['space_max'], 4)*100
-    bandwidth = info['bandwidth_used'] / (1024 * 1024)
-    response+= f"User : {info['username']}\nSpace Used : {space}\nPremium : {info['premium']}\nBandwidth Used : {bandwidth}"
-
+    space_max = info['space_max'] / (1024 * 1024 * 1024)
+    bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
+    response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB"
 
     bot.reply_to(message, response)
+
+@bot.message_handler(func=lambda message: message.text.startswith('magnet:?xt='))
+def handle_magnet(message):
+    magnet = message.text
+    add = account.addTorrent(magnetLink=magnet)
+    if add['result'] == True:
+        res = f"Torrent Added\n\n{add['title']}\nTorrent hash : {add['torrent_hash']}"
+    else:
+        res = f"Download failed \n\n{add['result']}"
+    bot.reply_to(message, res)
 
 @bot.message_handler(func=lambda message: True)
 def handle_download(message):
