@@ -61,7 +61,7 @@ def handle_scan_page(message):
         for torrent in scan['torrents']:
             response+= f"{torrent['title']}\n{torrent['magnet']}\n\n"
     else:
-        response = f"No magnet links found.}"
+        response = "No magnet links found."
     bot.reply_to(message, response)
 
 @bot.message_handler(func=lambda message: True)
