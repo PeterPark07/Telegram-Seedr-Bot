@@ -57,14 +57,15 @@ def handle_scan_page(message):
     page = message.text
     scan = account.scanPage(page)
     torrents = scan['torrents']
+    sep = '-'*20
     if scan['result'] == True and torrents != [] :
         n = 0
         response = 'Torrents Found :\n\n\n'
         for torrent in torrents:
             n+=1
-            new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
+            new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n{sep}\n\n"
             response+= new
-            if len(response) > 3200:
+            if len(response) > 3600:
                 try:
                     bot.reply_to(message, response)
                     response = ''
