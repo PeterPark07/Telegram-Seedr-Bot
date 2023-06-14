@@ -62,12 +62,15 @@ def handle_scan_page(message):
         response = 'Torrents Found :\n\n\n'
         for torrent in torrents:
             n+=1
-            response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
+            new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
+            response+= new
             if len(response) > 2200:
                 try:
                     bot.reply_to(message, response)
                 except:
-                    bot.reply_to(message, "that happens")
+                    response = response.replace(new, '*')
+                    bot.reply_to(message, response)
+                    bot.reply_to(message, new)
                 response = ""
     else:
         response = "No magnet links found."
