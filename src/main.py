@@ -74,6 +74,7 @@ def handle_scan_page(message):
                     bot.reply_to(message, response)
                     response = new
         try:
+            response+= f'{n} torrents found'
             bot.reply_to(message, response)
         except:
             a = 1
