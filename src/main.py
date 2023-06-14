@@ -60,17 +60,19 @@ def handle_scan_page(message):
         n = 0
         torrents = scan['torrents']
         response = 'Torrents Found :\n\n\n'
-        if len(torrents) < 5:
+        if len(torrents) < 4:
             for torrent in torrents:
                 n+=1
                 response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
         else:
-            for part in range(len(torrents) // 5 + 1):
-                start = part * 5
+            for part in range(len(torrents) // 3 + 1):
+                start = part * 3
                 n = start
-                end = start + 5
+                end = start + 3
+                print(start, n , end , end = "\n\n\n")
                 for torrent in torrents[start:end]:
                     n += 1
+                    print(n, end = "------------------")
                     response += f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
                     bot.reply_to(message, response)
                 response = ''
