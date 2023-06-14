@@ -56,9 +56,9 @@ def handle_magnet(message):
 def handle_scan_page(message):
     page = message.text
     scan = account.scanPage(page)
-    if scan['result'] == True and scan['torrents'] != [] :
+    torrents = scan['torrents']
+    if scan['result'] == True and torrents != [] :
         n = 0
-        torrents = scan['torrents']
         response = 'Torrents Found :\n\n\n'
         if len(torrents) < 4:
             for torrent in torrents:
