@@ -72,6 +72,10 @@ def handle_scan_page(message):
                     bot.reply_to(message, response)
                     bot.reply_to(message, new)
                 response = ""
+        try:
+            bot.reply_to(message, response)
+        except:
+            a = 1
     else:
         response = "No magnet links found."
         bot.reply_to(message, response)
