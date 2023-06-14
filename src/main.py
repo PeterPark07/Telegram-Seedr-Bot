@@ -57,7 +57,7 @@ def handle_scan_page(message):
     page = message.text
     scan = account.scanPage(page)
     torrents = scan['torrents']
-    sep = '-'*20
+    sep = '-'*30
     if scan['result'] == True and torrents != [] :
         n = 0
         response = 'Torrents Found :\n\n\n'
@@ -74,7 +74,7 @@ def handle_scan_page(message):
                     bot.reply_to(message, response)
                     response = new
         try:
-            response+= f'{n} torrents found'
+            response+= f'{n} Torrents Found.'
             bot.reply_to(message, response)
         except:
             a = 1
