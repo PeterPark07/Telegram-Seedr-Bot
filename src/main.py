@@ -99,6 +99,11 @@ def handle_magnet(message):
                     except Exception as e:
                         bot.reply_to(message, f"not downloaded \n{e}" )
                     delete = account.deleteFolder(folderId=folder_id)
+                    directory = os.getcwd()
+                    file_list = os.listdir(directory)
+                    print("Files and directories in=====", directory)
+                    for file in file_list:
+                        print(file)
                     if file_link:
                         bot.reply_to(message, f"File link: {file_link}")
                     else:
