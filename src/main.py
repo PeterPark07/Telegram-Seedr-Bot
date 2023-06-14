@@ -38,7 +38,8 @@ def handle_account_info(message):
     space = round(info['space_used'] / info['space_max'] * 100, 2)
     space_max = info['space_max'] / (1024 * 1024 * 1024)
     bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
-    response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB"
+    response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB\n\n"
+    
 
     bot.reply_to(message, response)
 
@@ -48,6 +49,18 @@ def handle_magnet(message):
     add = account.addTorrent(magnetLink=magnet)
     if add['result'] == True:
         response = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash : {add['torrent_hash']}"
+        storage = account.listContents()
+        torrents = storage['torrents']
+        if torrents :
+            for torrent in torrents:
+                if torrent['warnings'] != '[]':
+                    result = account.deleteTorrent(torrentId=torrent['id'])
+                    response = 'Defective Torrent.\n\n'
+                    warnings = torrent['warnings'].strip('[]').replace('"','').split(',')
+                    for warn in warnings:
+                        response+= f"{warn}\n"
+                else:
+                    response+= f"\n\n Size : {round(torrent['size'] / (1024 * 1024) , 2)} MB\nQuality : {torrent['torrent_quality']}"
     else:
         response = f"Download failed \n\n{add['result']}"
     bot.reply_to(message, response)
@@ -58,7 +71,7 @@ def handle_scan_page(message):
     scan = account.scanPage(page)
     torrents = scan['torrents']
     sep = '-'*30
-    if scan['result'] == True and torrents != [] :
+    if scan['result'] == True and torrents :
         n = 0
         response = 'Torrents Found :\n\n\n'
         for torrent in torrents:
