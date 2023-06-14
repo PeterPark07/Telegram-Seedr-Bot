@@ -64,14 +64,14 @@ def handle_scan_page(message):
             n+=1
             new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
             response+= new
-            if len(response) > 2200:
+            if len(response) > 3200:
                 try:
                     bot.reply_to(message, response)
+                    response = ''
                 except:
                     response = response.replace(new, '*')
                     bot.reply_to(message, response)
-                    bot.reply_to(message, new)
-                response = ""
+                    response = new
         try:
             bot.reply_to(message, response)
         except:
