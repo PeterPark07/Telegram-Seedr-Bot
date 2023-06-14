@@ -2,7 +2,7 @@ from flask import Flask, request
 import time
 import os
 import telebot
-from helper.account import account
+from helper.account import account, cookie, retrieve_file_link
 
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
@@ -73,6 +73,18 @@ def handle_magnet(message):
                         response+= f"{warn}\n"
                 else:
                     response+= f"\n\nQuality : {torrent['torrent_quality']}\n\n Size : {round(torrent['size'] / (1024 * 1024) , 2)} MB"
+                    bot.reply_to(message, response)
+                    time.sleep(15)
+                    folders = account.listContents()['folders']
+                    if folders:
+                        for folder in folders:
+                            folder_id = folder['id']
+                    file_link = retrieve_file_link(cookie, folder_id)
+                    if file_link:
+                        bot.reply_to(message, f"File link: {file_link}")
+                    else:
+                        bot.reply_to(message, "Unable to retrieve file link.")
+                    return
     else:
         response = f"Download failed \n\n{add['result']}"
     bot.reply_to(message, response)
