@@ -39,7 +39,6 @@ def handle_account_info(message):
     space_max = info['space_max'] / (1024 * 1024 * 1024)
     bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
     response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB\n\n"
-    
 
     bot.reply_to(message, response)
 
@@ -53,7 +52,7 @@ def handle_magnet(message):
         torrents = storage['torrents']
         if torrents :
             for torrent in torrents:
-                if torrent['warnings'] != '[]':
+                if torrent['warnings'] != '[]' and torrent['warnings'] :
                     result = account.deleteTorrent(torrentId=torrent['id'])
                     response = 'Defective Torrent.\n\n'
                     warnings = torrent['warnings'].strip('[]').replace('"','').split(',')
