@@ -86,8 +86,8 @@ def handle_magnet(message):
                     try:
                         wget.download(file_link, out="downloaded_file.ext")
                         bot.reply_to(message, "downloaded" )
-                    except:
-                        bot.reply_to(message, "not downloaded" )
+                    except Exception as e:
+                        bot.reply_to(message, f"not downloaded \n{e}" )
                     delete = account.deleteFolder(folderId=folder_id)
                     if file_link:
                         bot.reply_to(message, f"File link: {file_link}")
