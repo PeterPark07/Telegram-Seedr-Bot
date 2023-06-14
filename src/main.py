@@ -1,6 +1,7 @@
 from flask import Flask, request
 import time
 import os
+import wget
 import telebot
 from helper.account import account, cookie, retrieve_file_link
 
@@ -75,14 +76,18 @@ def handle_magnet(message):
                     response+= f"\n\nQuality : {torrent['torrent_quality']}\n\n Size : {round(torrent['size'] / (1024 * 1024) , 2)} MB"
                     bot.reply_to(message, response)
                     while torrents :
+                        time.sleep(10)
                         torrents = account.listContents()['torrents']
-                        bot.reply_to(message, "uwu")
-                        time.sleep(4)
                     folders = account.listContents()['folders']
                     if folders:
                         for folder in folders:
                             folder_id = folder['id']
                     file_link = retrieve_file_link(cookie, folder_id)
+                    try:
+                        wget.download(file_link, out="downloaded_file.ext")
+                        bot.reply_to(message, "downloaded" )
+                    except:
+                        bot.reply_to(message, "not downloaded" )
                     delete = account.deleteFolder(folderId=folder_id)
                     if file_link:
                         bot.reply_to(message, f"File link: {file_link}")
