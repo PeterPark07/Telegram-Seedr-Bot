@@ -60,12 +60,26 @@ def handle_scan_page(message):
     if scan['result'] == True and torrents != [] :
         n = 0
         response = 'Torrents Found :\n\n\n'
+        for torrent in torrents:
+            n+=1
+            response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
+            if len(response > 2200):
+                try:
+                    bot.reply_to(message, response)
+                except:
+                    bot.reply_to(message, "that happens")
+                response = ""
+      
+    
+    
+    
+'''        n = 0
+        response = 'Torrents Found :\n\n\n'
         if len(torrents) < 4:
             for torrent in torrents:
                 n+=1
                 response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
         else:
-            return
             for part in range(len(torrents) // 2 + 1):
                 start = part * 2
                 n = start
@@ -76,7 +90,7 @@ def handle_scan_page(message):
                 bot.reply_to(message, response)
                 response = ''
             return
-
+'''
     else:
         response = "No magnet links found."
     bot.reply_to(message, response)
