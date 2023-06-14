@@ -8,6 +8,7 @@ from helper.account import account, cookie, retrieve_file_link
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
 state = str(account.testToken()['result'])
+last_message_id = []
 
 # Bot route to handle incoming messages
 @app.route('/', methods=['POST'])
@@ -58,6 +59,16 @@ def handle_account_info(message):
 
 @bot.message_handler(func=lambda message: message.text.startswith('magnet:?xt='))
 def handle_magnet(message):
+    global last_message_id  
+  
+    # Check if this is the same message as the previous one  
+    if message.message_id in last_message_id:  
+         return  
+  
+    # Store the current message ID as the most recent one  
+    last_message_id.append(message.message_id)
+    
+    
     magnet = message.text
     add = account.addTorrent(magnetLink=magnet)
     if add['result'] == True:
