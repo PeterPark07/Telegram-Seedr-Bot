@@ -2,7 +2,7 @@ from flask import Flask, request
 import time
 import os
 import telebot
-from helper.account import account, cookie, retrieve_file_link, download
+from helper.account import account, cookie, retrieve_file_link, download, upload
 
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
@@ -93,19 +93,19 @@ def handle_magnet(message):
                         for folder in folders:
                             folder_id = folder['id']
                     file_link = retrieve_file_link(cookie, folder_id)
+                    file_name = "downloaded_file.zip"
                     try:
-                        download(file_link, "downloaded_file.zip")
+                        download(file_link, file_name)
                         bot.reply_to(message, "downloaded" )
                     except Exception as e:
                         bot.reply_to(message, f"not downloaded \n{e}" )
                     delete = account.deleteFolder(folderId=folder_id)
                     directory = os.getcwd()
-                    file_list = os.listdir(directory)
-                    print("Files and directories in=====", directory)
-                    for file in file_list:
-                        print(file)
-                    if file_link:
-                        bot.reply_to(message, f"File link: {file_link}")
+                    to_upload = os.path.join(directory, file_name)
+                    link = upload(to_upload)
+                    
+                    if link:
+                        bot.reply_to(message, f"File link: {link}")
                     else:
                         bot.reply_to(message, "Unable to retrieve file link.")
                     return
