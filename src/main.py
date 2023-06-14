@@ -46,12 +46,12 @@ def handle_account_info(message):
     if folders:
         response+= "Folders - \n\n"
         for folder in folders:
-            response+= f"{folder['fullname']}\n{round(folder['size']/(1024*1024),2) MB}\n\n"
+            response+= f"{folder['fullname']}\n{round(folder['size']/(1024*1024),2)} MB\n\n"
     files = storage['files']
     if files:
         response+= "Files - \n\n"
         for file in files:
-            response+= f"{file['name']}\n{round(file['size']/(1024*1024),2) MB}\n\n"
+            response+= f"{file['name']}\n{round(file['size']/(1024*1024),2)} MB\n\n"
     
     bot.reply_to(message, response)
 
