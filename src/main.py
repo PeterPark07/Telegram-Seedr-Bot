@@ -60,16 +60,15 @@ def handle_scan_page(message):
         n = 0
         torrents = scan['torrents']
         response = 'Torrents Found :\n\n\n'
-        if len(torrents) < 10:
+        if len(torrents) < 5:
             for torrent in torrents:
                 n+=1
                 response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
         else:
-            return
-            for part in range(len(torrents) // 10 + 1):
-                start = part * 10
+            for part in range(len(torrents) // 5 + 1):
+                start = part * 5
                 n = start
-                end = start + 10
+                end = start + 5
                 for torrent in torrents[start:end]:
                     n += 1
                     response += f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
