@@ -74,7 +74,7 @@ def handle_scan_page(message):
                     n += 1
                     print(n, end = "------------------")
                     response += f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
-                    bot.reply_to(message, response)
+                bot.reply_to(message, response)
                 response = ''
             return
 
