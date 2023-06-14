@@ -63,7 +63,7 @@ def handle_scan_page(message):
         for torrent in torrents:
             n+=1
             response+= f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
-            if len(response > 2200):
+            if len(response) > 2200:
                 try:
                     bot.reply_to(message, response)
                 except:
@@ -72,7 +72,6 @@ def handle_scan_page(message):
     else:
         response = "No magnet links found."
         bot.reply_to(message, response)
-    
     
     
         """n = 0
