@@ -38,8 +38,21 @@ def handle_account_info(message):
     space = round(info['space_used'] / info['space_max'] * 100, 2)
     space_max = info['space_max'] / (1024 * 1024 * 1024)
     bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
-    response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB\n\n"
-
+    response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB\n\n\n"
+    
+    storage = account.listContents()
+    folders = storage['folders']
+    
+    if folders:
+        response+= "Folders - \n\n"
+        for folder in folders:
+            response+= f"{folder['fullname']}\n{round(folder['size']/(1024*1024),2) MB}\n\n"
+    files = storage['files']
+    if files:
+        response+= "Files - \n\n"
+        for file in files:
+            response+= f"{file['name']}\n{round(file['size']/(1024*1024),2) MB}\n\n"
+    
     bot.reply_to(message, response)
 
 @bot.message_handler(func=lambda message: message.text.startswith('magnet:?xt='))
@@ -59,7 +72,7 @@ def handle_magnet(message):
                     for warn in warnings:
                         response+= f"{warn}\n"
                 else:
-                    response+= f"\n\n Size : {round(torrent['size'] / (1024 * 1024) , 2)} MB\nQuality : {torrent['torrent_quality']}"
+                    response+= f"\n\nQuality : {torrent['torrent_quality']}\n\n Size : {round(torrent['size'] / (1024 * 1024) , 2)} MB"
     else:
         response = f"Download failed \n\n{add['result']}"
     bot.reply_to(message, response)
