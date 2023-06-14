@@ -74,12 +74,16 @@ def handle_magnet(message):
                 else:
                     response+= f"\n\nQuality : {torrent['torrent_quality']}\n\n Size : {round(torrent['size'] / (1024 * 1024) , 2)} MB"
                     bot.reply_to(message, response)
-                    time.sleep(15)
+                    while torrents :
+                        torrents = account.listContents()['torrents']
+                        bot.reply_to(message, "uwu")
+                        time.sleep(4)
                     folders = account.listContents()['folders']
                     if folders:
                         for folder in folders:
                             folder_id = folder['id']
                     file_link = retrieve_file_link(cookie, folder_id)
+                    delete = account.deleteFolder(folderId=folder_id)
                     if file_link:
                         bot.reply_to(message, f"File link: {file_link}")
                     else:
