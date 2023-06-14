@@ -101,8 +101,11 @@ def handle_magnet(message):
                         bot.reply_to(message, f"not downloaded \n{e}" )
                     delete = account.deleteFolder(folderId=folder_id)
                     directory = os.getcwd()
-                    to_upload = os.path.join(directory, file_name)
-                    link = upload(to_upload)
+                    to_upload = str(os.path.join(directory, file_name))
+                    try:
+                        link = upload(to_upload)
+                    except:
+                        link = "could not upload"
                     
                     if link:
                         bot.reply_to(message, f"File link: {link}")
