@@ -69,11 +69,13 @@ def handle_scan_page(message):
                 except:
                     bot.reply_to(message, "that happens")
                 response = ""
-      
+    else:
+        response = "No magnet links found."
+        bot.reply_to(message, response)
     
     
     
-'''        n = 0
+        """n = 0
         response = 'Torrents Found :\n\n\n'
         if len(torrents) < 4:
             for torrent in torrents:
@@ -89,11 +91,7 @@ def handle_scan_page(message):
                     response += f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n\n"
                 bot.reply_to(message, response)
                 response = ''
-            return'''
-            
-    else:
-        response = "No magnet links found."
-        bot.reply_to(message, response)
+            return"""
 
 @bot.message_handler(func=lambda message: True)
 def handle_download(message):
