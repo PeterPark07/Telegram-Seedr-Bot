@@ -5,6 +5,7 @@ import requests
 import json
 import secrets
 import os
+import wget
 
 email = os.getenv('email')
 password = os.getenv('pass')
@@ -33,3 +34,7 @@ def retrieve_file_link(cookie, folder_id):
         return response['url']
     else:
         return None
+        
+        
+def download(url, name):
+    wget.download(url, out=name)

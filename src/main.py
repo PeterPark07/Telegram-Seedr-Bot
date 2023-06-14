@@ -1,9 +1,8 @@
 from flask import Flask, request
 import time
 import os
-import wget
 import telebot
-from helper.account import account, cookie, retrieve_file_link
+from helper.account import account, cookie, retrieve_file_link, download
 
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
@@ -95,7 +94,7 @@ def handle_magnet(message):
                             folder_id = folder['id']
                     file_link = retrieve_file_link(cookie, folder_id)
                     try:
-                        wget.download(file_link, out="downloaded_file.ext")
+                        download(file_link, "downloaded_file.zip")
                         bot.reply_to(message, "downloaded" )
                     except Exception as e:
                         bot.reply_to(message, f"not downloaded \n{e}" )
