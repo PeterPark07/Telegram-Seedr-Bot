@@ -148,7 +148,7 @@ def handle_magnet(message):
                 try:
                     bot.reply_to(message, f"Downloading...")
                     downloaded = download_file(file_link, file_name)
-                    bot.reply_to(message, f"Downloaded.\n{downloaded}")
+                    bot.reply_to(message, f"Downloaded : {downloaded}")
                 except Exception as e:
                     bot.reply_to(message, f"Not downloaded.\n{e}")
                     return
