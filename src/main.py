@@ -4,6 +4,7 @@ import time
 import telebot
 from helper.account import account, cookie
 from helper.functions import retrieve_file_link, download_file, convert_size
+import gofile
 
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
@@ -151,12 +152,18 @@ def handle_magnet(message):
                     bot.reply_to(message, f"Downloaded : {downloaded}")
                 except Exception as e:
                     bot.reply_to(message, f"Not downloaded.\n{e}")
+                    delete = account.deleteFolder(folderId=folder_id)
                     return
 
                 delete = account.deleteFolder(folderId=folder_id)
-                directory = os.getcwd()
-                to_upload = str(os.path.join(directory, file_name))
-                bot.reply_to(message, to_upload)
+                
+                try:
+                    bot.reply_to(message, "Uploading..." )
+                    response = gofile.uploadFile(file=file_name)
+                    bot.reply_to(message, "Uploaded." )
+                except:
+                    bot.reply_to(message, "Not Uploaded." )
+                return
     else:
         response = f"Download failed\n\n{add['result']}"
     bot.reply_to(message, response)
