@@ -100,6 +100,7 @@ def handle_magnet(message):
                         bot.reply_to(message, "Downloaded")
                     except Exception as e:
                         bot.reply_to(message, f"Not downloaded\n{e}")
+                        return
                     delete = account.deleteFolder(folderId=folder_id)
                     directory = os.getcwd()
                     to_upload = str(os.path.join(directory, file_name))
@@ -116,7 +117,7 @@ def handle_magnet(message):
                     except Exception as e:
                         print('Upload failed')
                         print(e)
-                        bot.reply_to(message, "Could not upload file.")
+                        bot.reply_to(message, f"Could not upload file.\n{e}")
                     return
     else:
         response = f"Download failed\n\n{add['result']}"
