@@ -155,31 +155,25 @@ def handle_magnet(message):
 def handle_scan_page(message):
     page = message.text
     scan = account.scanPage(page)
-    torrents = scan['torrents']
+    torrents = scan.get('torrents', [])
     sep = '-' * 30
-    if scan['result'] == True and torrents:
-        n = 0
+
+    if scan['result'] and torrents:
         response = 'Torrents Found:\n\n\n'
-        for torrent in torrents:
-            n += 1
+        for n, torrent in enumerate(torrents, start=1):
             new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n{sep}\n\n"
-            response += new
-            if len(response) > 3600:
-                try:
-                    bot.reply_to(message, response)
-                    response = ''
-                except:
-                    response = response.replace(new, '*')
-                    bot.reply_to(message, response)
-                    response = new
-        try:
-            response += f'{n} Torrents Found.'
-            bot.reply_to(message, response)
-        except:
-            a = 1
+            if len(response + new) > 3900:
+                bot.reply_to(message, response)
+                response = new
+            else:
+                response += new
+
+        response += f'{n} Torrents Found.'
+        bot.reply_to(message, response) if response else None
     else:
         response = "No magnet links found."
         bot.reply_to(message, response)
+
 
 @bot.message_handler(func=lambda message: True)
 def handle_other_messages(message):
