@@ -23,8 +23,8 @@ def telegram():
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     # Handle the /start command
-    name =  message.from_user.username or message.from_user.first_name or message.from_user.last_name
-    bot.reply_to(message, f"Hello {name}! Welcome to Torrent Bot\n\n If you want to see the available commands, type /help.\nBot active : {state}")
+    name = message.from_user.username or message.from_user.first_name or message.from_user.last_name
+    bot.reply_to(message, f"Hello {name}! Welcome to Torrent Bot\n\nIf you want to see the available commands, type /help.\nBot active: {state}")
 
 # Command: /help
 @bot.message_handler(commands=['help'])
@@ -40,53 +40,53 @@ def handle_account_info(message):
     space = round(info['space_used'] / info['space_max'] * 100, 2)
     space_max = info['space_max'] / (1024 * 1024 * 1024)
     bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
-    response = f"User : {info['username']}\nSpace Used : {space}% of {space_max} GB\nPremium : {info['premium']}\nBandwidth Used : {bandwidth} GB\n\n\n"
-    
+    response = f"User: {info['username']}\nSpace Used: {space}% of {space_max} GB\nPremium: {info['premium']}\nBandwidth Used: {bandwidth} GB\n\n"
+
     storage = account.listContents()
     folders = storage['folders']
-    
+
     if folders:
-        response+= "Folders - \n\n"
+        response += "Folders - \n\n"
         for folder in folders:
-            response+= f"{folder['fullname']}\n{round(folder['size']/(1024*1024),2)} MB\n\n"
+            response += f"{folder['fullname']}\n{round(folder['size'] / (1024 * 1024), 2)} MB\n\n"
+
     files = storage['files']
     if files:
-        response+= "Files - \n\n"
+        response += "Files - \n\n"
         for file in files:
-            response+= f"{file['name']}\n{round(file['size']/(1024*1024),2)} MB\n\n"
-    
+            response += f"{file['name']}\n{round(file['size'] / (1024 * 1024), 2)} MB\n\n"
+
     bot.reply_to(message, response)
 
 @bot.message_handler(func=lambda message: message.text.startswith('magnet:?xt='))
 def handle_magnet(message):
-    global last_message_id  
-  
-    # Check if this is the same message as the previous one  
-    if message.message_id in last_message_id:  
-         return  
-  
-    # Store the current message ID as the most recent one  
+    global last_message_id
+
+    # Check if this is the same message as the previous one
+    if message.message_id in last_message_id:
+        return
+
+    # Store the current message ID as the most recent one
     last_message_id.append(message.message_id)
-    
-    
+
     magnet = message.text
     add = account.addTorrent(magnetLink=magnet)
     if add['result'] == True:
-        response = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash : {add['torrent_hash']}"
+        response = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash: {add['torrent_hash']}"
         storage = account.listContents()
         torrents = storage['torrents']
-        if torrents :
+        if torrents:
             for torrent in torrents:
-                if torrent['warnings'] != '[]' and torrent['warnings'] :
+                if torrent['warnings'] != '[]' and torrent['warnings']:
                     result = account.deleteTorrent(torrentId=torrent['id'])
                     response = 'Defective Torrent.\n\n'
-                    warnings = torrent['warnings'].strip('[]').replace('"','').split(',')
+                    warnings = torrent['warnings'].strip('[]').replace('"', '').split(',')
                     for warn in warnings:
-                        response+= f"{warn}\n"
+                        response += f"{warn}\n"
                 else:
-                    response+= f"\n\nQuality : {torrent['torrent_quality']}\n\n Size : {round(torrent['size'] / (1024 * 1024) , 2)} MB"
+                    response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {round(torrent['size'] / (1024 * 1024), 2)} MB"
                     bot.reply_to(message, response)
-                    while torrents :
+                    while torrents:
                         time.sleep(10)
                         torrents = account.listContents()['torrents']
                     folders = account.listContents()['folders']
@@ -97,29 +97,29 @@ def handle_magnet(message):
                     file_name = torrent['name']
                     try:
                         download(file_link, file_name)
-                        bot.reply_to(message, "downloaded" )
+                        bot.reply_to(message, "Downloaded")
                     except Exception as e:
-                        bot.reply_to(message, f"not downloaded \n{e}" )
+                        bot.reply_to(message, f"Not downloaded\n{e}")
                     delete = account.deleteFolder(folderId=folder_id)
                     directory = os.getcwd()
                     to_upload = str(os.path.join(directory, file_name))
                     print(to_upload)
                     try:
-                        print('uploding')
+                        print('Uploading')
                         link = gofile.uploadFile(file=to_upload, server="store7")["downloadPage"]
-                        print('uploaded')
+                        print('Uploaded')
                     except Exception as e:
-                        print('fails')
+                        print('Upload failed')
                         print(e)
-                        link = "could not upload"
-                    
+                        link = "Could not upload"
+
                     if link:
                         bot.reply_to(message, f"File link: {link}")
                     else:
                         bot.reply_to(message, "Unable to retrieve file link.")
                     return
     else:
-        response = f"Download failed \n\n{add['result']}"
+        response = f"Download failed\n\n{add['result']}"
     bot.reply_to(message, response)
 
 @bot.message_handler(func=lambda message: message.text.startswith('http'))
@@ -127,14 +127,14 @@ def handle_scan_page(message):
     page = message.text
     scan = account.scanPage(page)
     torrents = scan['torrents']
-    sep = '-'*30
-    if scan['result'] == True and torrents :
+    sep = '-' * 30
+    if scan['result'] == True and torrents:
         n = 0
-        response = 'Torrents Found :\n\n\n'
+        response = 'Torrents Found:\n\n\n'
         for torrent in torrents:
-            n+=1
+            n += 1
             new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n{sep}\n\n"
-            response+= new
+            response += new
             if len(response) > 3600:
                 try:
                     bot.reply_to(message, response)
@@ -144,7 +144,7 @@ def handle_scan_page(message):
                     bot.reply_to(message, response)
                     response = new
         try:
-            response+= f'{n} Torrents Found.'
+            response += f'{n} Torrents Found.'
             bot.reply_to(message, response)
         except:
             a = 1
@@ -156,6 +156,3 @@ def handle_scan_page(message):
 def handle_download(message):
     m = message.text
     bot.reply_to(message, m)
-
-
-
