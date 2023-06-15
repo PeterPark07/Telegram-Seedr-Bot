@@ -105,18 +105,18 @@ def handle_magnet(message):
                     to_upload = str(os.path.join(directory, file_name))
                     print(to_upload)
                     try:
-                        print('Uploading')
-                        link = gofile.uploadFile(file=to_upload, server="store7")["downloadPage"]
-                        print('Uploaded')
+                        files = {'file': open(to_upload, 'rb')}
+                        response = requests.post('https://api.gofile.io/uploadFile', files=files)
+                        if response.status_code == 200:
+                            json_response = response.json()
+                            link = json_response['data']['downloadPage']
+                            bot.reply_to(message, f"File link: {link}")
+                        else:
+                            bot.reply_to(message, "Unable to upload file.")
                     except Exception as e:
                         print('Upload failed')
                         print(e)
-                        link = "Could not upload"
-
-                    if link:
-                        bot.reply_to(message, f"File link: {link}")
-                    else:
-                        bot.reply_to(message, "Unable to retrieve file link.")
+                        bot.reply_to(message, "Could not upload file.")
                     return
     else:
         response = f"Download failed\n\n{add['result']}"
