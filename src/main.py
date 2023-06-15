@@ -163,7 +163,7 @@ def handle_magnet(message):
                 try:
                     bot.reply_to(message, "Uploading..." )
                     response = gofile.uploadFile(file=file_name)
-                    bot.reply_to(message, "Uploaded." )
+                    bot.reply_to(message, f"Uploaded.\n{response['downloadPage']}" )
                 except:
                     bot.reply_to(message, "Not Uploaded." )
                 return
