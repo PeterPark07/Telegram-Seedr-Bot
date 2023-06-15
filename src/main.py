@@ -111,7 +111,6 @@ def handle_magnet(message):
     last_message_id.append(message.message_id)
 
     magnet = message.text
-    return
     # Add the torrent using the provided magnet link
     add = account.addTorrent(magnetLink=magnet)
     
@@ -148,33 +147,17 @@ def handle_magnet(message):
                     file_name = torrent['name'] + '.zip'
 
                     try:
-                        bot.reply_to(message, f"Downloading, {file_link}, {file_name}")
+                        bot.reply_to(message, f"Downloading...")
                         download_file(file_link, file_name)
-                        bot.reply_to(message, "Downloaded")
+                        bot.reply_to(message, "Downloaded.")
                     except Exception as e:
-                        bot.reply_to(message, f"Not downloaded\n{e}")
+                        bot.reply_to(message, f"Not downloaded.\n{e}")
                         return
 
                     delete = account.deleteFolder(folderId=folder_id)
                     directory = os.getcwd()
                     to_upload = str(os.path.join(directory, file_name))
-                    print(to_upload)
-
-                    try:
-                        files = {'file': open(to_upload, 'rb')}
-                        response = requests.post('https://api.gofile.io/uploadFile', files=files)
-
-                        if response.status_code == 200:
-                            json_response = response.json()
-                            link = json_response['data']['downloadPage']
-                            bot.reply_to(message, f"File link: {link}")
-                        else:
-                            bot.reply_to(message, "Unable to upload file.")
-                    except Exception as e:
-                        print('Upload failed')
-                        print(e)
-                        bot.reply_to(message, f"Could not upload file.\n{e}")
-                    return
+                    bot.reply_to(message, to_upload)
     else:
         response = f"Download failed\n\n{add['result']}"
     bot.reply_to(message, response)
