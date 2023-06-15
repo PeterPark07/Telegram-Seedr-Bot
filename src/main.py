@@ -104,7 +104,7 @@ def handle_magnet(message):
     last_message_id.append(message.message_id)
 
     magnet = message.text
-
+    return
     # Add the torrent using the provided magnet link
     add = account.addTorrent(magnetLink=magnet)
     
@@ -171,6 +171,8 @@ def handle_magnet(message):
     else:
         response = f"Download failed\n\n{add['result']}"
     bot.reply_to(message, response)
+
+
 
 
 
