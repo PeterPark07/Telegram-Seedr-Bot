@@ -3,7 +3,7 @@ import time
 import os
 import telebot
 from helper.account import account, cookie
-from helper.func import retrieve_file_link, download
+from helper.func import retrieve_file_link, download, convert_bytes
 import requests
 import gofile
 
@@ -33,8 +33,8 @@ def handle_help(message):
 def handle_account_info(message):
     info = account.getSettings()['account']
     space = round(info['space_used'] / info['space_max'] * 100, 2)
-    space_max = info['space_max'] / (1024 * 1024 * 1024)
-    bandwidth = round(info['bandwidth_used'] / (1024 * 1024 * 1024), 2)
+    space_max = convert_bytes(info['space_max'],'GB')
+    bandwidth = convert_bytes(info['bandwidth_used'], 'GB')
     response = f"User: {info['username']}\nSpace Used: {space}% of {space_max} GB\nPremium: {info['premium']}\nBandwidth Used: {bandwidth} GB\n\n"
 
     storage = account.listContents()
@@ -43,13 +43,13 @@ def handle_account_info(message):
     if folders:
         response += "Folders - \n\n"
         for folder in folders:
-            response += f"{folder['fullname']}\n{round(folder['size'] / (1024 * 1024), 2)} MB\n\n"
+            response += f"{folder['fullname']}\n{convert_bytes(folder['size'], 'MB')} MB\n\n"
 
     files = storage['files']
     if files:
         response += "Files - \n\n"
         for file in files:
-            response += f"{file['name']}\n{round(file['size'] / (1024 * 1024), 2)} MB\n\n"
+            response += f"{file['name']}\n{convert_bytes(file['size'], 'MB')} MB\n\n"
 
     bot.reply_to(message, response)
 
@@ -77,7 +77,7 @@ def handle_magnet(message):
                     for warn in warnings:
                         response += f"{warn}\n"
                 else:
-                    response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {round(torrent['size'] / (1024 * 1024), 2)} MB"
+                    response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {convert_bytes(torrent['size'], 'MB')} MB"
                     bot.reply_to(message, response)
                     while torrents:
                         time.sleep(10)

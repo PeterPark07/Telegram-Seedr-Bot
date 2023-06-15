@@ -23,3 +23,11 @@ def retrieve_file_link(cookie, folder_id):
 def download(url, name):
     wget.download(url, out=name)
     
+
+def convert_bytes(size, unit):
+    if unit == 'MB':
+        return round(size / (1024 * 1024), 2)
+    elif unit == 'GB':
+        return round(size / (1024 * 1024 * 1024), 2)
+    else:
+        return size
