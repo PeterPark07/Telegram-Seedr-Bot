@@ -106,7 +106,7 @@ def handle_magnet(message):
                     print(to_upload)
                     try:
                         print('uploding')
-                        link = gofile.uploadFile(file=file)["downloadPage"]
+                        link = gofile.uploadFile(file=to_upload, server="store7")["downloadPage"]
                         print('uploaded')
                     except Exception as e:
                         print('fails')
