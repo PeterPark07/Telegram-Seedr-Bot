@@ -12,7 +12,6 @@ bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
 state = str(account.testToken()['result'])
 last_message_id = []
 
-# Bot route to handle incoming messages
 @app.route('/', methods=['POST'])
 def telegram():
     if request.headers.get('content-type') == 'application/json':
@@ -21,23 +20,17 @@ def telegram():
         bot.process_new_updates([update])
         return 'OK', 200
 
-# Command: /start
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    # Handle the /start command
     name = message.from_user.username or message.from_user.first_name or message.from_user.last_name
     bot.reply_to(message, f"Hello {name}! Welcome to Torrent Bot\n\nIf you want to see the available commands, type /help.\nBot active: {state}")
 
-# Command: /help
 @bot.message_handler(commands=['help'])
 def handle_help(message):
-    # Handle the /help command
     bot.reply_to(message, "Available commands:\n\n/start\n/help\n/info")
 
-# Command: /info
 @bot.message_handler(commands=['info'])
 def handle_account_info(message):
-    # Handle the /info command
     info = account.getSettings()['account']
     space = round(info['space_used'] / info['space_max'] * 100, 2)
     space_max = info['space_max'] / (1024 * 1024 * 1024)
@@ -64,11 +57,9 @@ def handle_account_info(message):
 def handle_magnet(message):
     global last_message_id
 
-    # Check if this is the same message as the previous one
     if message.message_id in last_message_id:
         return
 
-    # Store the current message ID as the most recent one
     last_message_id.append(message.message_id)
 
     magnet = message.text
