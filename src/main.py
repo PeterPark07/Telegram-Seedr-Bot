@@ -3,7 +3,7 @@ import time
 import os
 import telebot
 from helper.account import account, cookie
-from helper.func import retrieve_file_link, download, convert_bytes
+from helper.functions import retrieve_file_link, download_file, convert_size
 import requests
 import gofile
 
@@ -20,6 +20,7 @@ def telegram():
         bot.process_new_updates([update])
         return 'OK', 200
 
+
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     name = message.from_user.username or message.from_user.first_name or message.from_user.last_name
@@ -29,12 +30,14 @@ def handle_start(message):
 def handle_help(message):
     bot.reply_to(message, "Available commands:\n\n/start\n/help\n/info")
 
+
+
 @bot.message_handler(commands=['info'])
 def handle_account_info(message):
     info = account.getSettings()['account']
     space = round(info['space_used'] / info['space_max'] * 100, 2)
-    space_max = convert_bytes(info['space_max'],'GB')
-    bandwidth = convert_bytes(info['bandwidth_used'], 'GB')
+    space_max = convert_size(info['space_max'],'GB')
+    bandwidth = convert_size(info['bandwidth_used'], 'GB')
     response = f"User: {info['username']}\nSpace Used: {space}% of {space_max} GB\nPremium: {info['premium']}\nBandwidth Used: {bandwidth} GB\n\n"
 
     storage = account.listContents()
@@ -43,13 +46,13 @@ def handle_account_info(message):
     if folders:
         response += "Folders - \n\n"
         for folder in folders:
-            response += f"{folder['fullname']}\n{convert_bytes(folder['size'], 'MB')} MB\n\n"
+            response += f"{folder['fullname']}\n{convert_size(folder['size'], 'MB')} MB\n\n"
 
     files = storage['files']
     if files:
         response += "Files - \n\n"
         for file in files:
-            response += f"{file['name']}\n{convert_bytes(file['size'], 'MB')} MB\n\n"
+            response += f"{file['name']}\n{convert_size(file['size'], 'MB')} MB\n\n"
 
     bot.reply_to(message, response)
 
@@ -77,7 +80,7 @@ def handle_magnet(message):
                     for warn in warnings:
                         response += f"{warn}\n"
                 else:
-                    response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {convert_bytes(torrent['size'], 'MB')} MB"
+                    response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {convert_size(torrent['size'], 'MB')} MB"
                     bot.reply_to(message, response)
                     while torrents:
                         time.sleep(10)
@@ -90,7 +93,7 @@ def handle_magnet(message):
                     file_name = torrent['name'] + '.zip'
                     try:
                         bot.reply_to(message, f"Downloading, {file_link}, {file_name}")
-                        download(file_link, file_name)
+                        download_file(file_link, file_name)
                         bot.reply_to(message, "Downloaded")
                     except Exception as e:
                         bot.reply_to(message, f"Not downloaded\n{e}")
@@ -148,6 +151,6 @@ def handle_scan_page(message):
         bot.reply_to(message, response)
 
 @bot.message_handler(func=lambda message: True)
-def handle_download(message):
+def handle_other_messages(message):
     m = message.text
     bot.reply_to(message, m)
