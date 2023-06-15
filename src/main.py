@@ -69,6 +69,12 @@ def handle_account_info(message):
 
 @bot.message_handler(func=lambda message: message.text.startswith('http'))
 def handle_scan_page(message):
+    # Check if the message has already been processed
+    global last_message_id
+    if message.message_id in last_message_id:
+        return
+    last_message_id.append(message.message_id)
+    
     page = message.text
     bot.reply_to(message, 'Scanning Page...')
     scan = account.scanPage(page)
