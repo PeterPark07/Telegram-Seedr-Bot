@@ -78,19 +78,28 @@ def handle_account_info(message):
 @bot.message_handler(func=lambda message: message.text.startswith('magnet:?xt='))
 def handle_magnet(message):
     global last_message_id
+
+    # Check if the message has already been processed
     if message.message_id in last_message_id:
         return
     last_message_id.append(message.message_id)
 
     magnet = message.text
+
+    # Add the torrent using the provided magnet link
     add = account.addTorrent(magnetLink=magnet)
+    
     if add['result'] == True:
         response = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash: {add['torrent_hash']}"
+
+        # Retrieve storage information
         storage = account.listContents()
         torrents = storage['torrents']
+
         if torrents:
             for torrent in torrents:
                 if torrent['warnings'] != '[]' and torrent['warnings']:
+                    # Delete defective torrents
                     result = account.deleteTorrent(torrentId=torrent['id'])
                     response = 'Defective Torrent.\n\n'
                     warnings = torrent['warnings'].strip('[]').replace('"', '').split(',')
@@ -102,12 +111,16 @@ def handle_magnet(message):
                     while torrents:
                         time.sleep(10)
                         torrents = account.listContents()['torrents']
+                    
                     folders = account.listContents()['folders']
+                    
                     if folders:
                         for folder in folders:
                             folder_id = folder['id']
+                    
                     file_link = retrieve_file_link(cookie, folder_id)
                     file_name = torrent['name'] + '.zip'
+
                     try:
                         bot.reply_to(message, f"Downloading, {file_link}, {file_name}")
                         download_file(file_link, file_name)
@@ -115,13 +128,16 @@ def handle_magnet(message):
                     except Exception as e:
                         bot.reply_to(message, f"Not downloaded\n{e}")
                         return
+
                     delete = account.deleteFolder(folderId=folder_id)
                     directory = os.getcwd()
                     to_upload = str(os.path.join(directory, file_name))
                     print(to_upload)
+
                     try:
                         files = {'file': open(to_upload, 'rb')}
                         response = requests.post('https://api.gofile.io/uploadFile', files=files)
+
                         if response.status_code == 200:
                             json_response = response.json()
                             link = json_response['data']['downloadPage']
@@ -136,6 +152,7 @@ def handle_magnet(message):
     else:
         response = f"Download failed\n\n{add['result']}"
     bot.reply_to(message, response)
+
 
 @bot.message_handler(func=lambda message: message.text.startswith('http'))
 def handle_scan_page(message):
