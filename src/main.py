@@ -3,8 +3,7 @@ import os
 import time
 import telebot
 from helper.account import account, cookie
-from helper.functions import retrieve_file_link, download_file, convert_size
-import gofile
+from helper.functions import retrieve_file_link, download_file, upload_file, convert_size
 
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
@@ -162,8 +161,8 @@ def handle_magnet(message):
                 
                 try:
                     bot.reply_to(message, "Uploading..." )
-                    response = gofile.uploadFile(file=file_name)
-                    bot.reply_to(message, f"Uploaded.\n{response['downloadPage']}" )
+                    link = upload_file(file_name)
+                    bot.reply_to(message, f"Uploaded.\n{link}" )
                 except:
                     bot.reply_to(message, "Not Uploaded." )
                 return

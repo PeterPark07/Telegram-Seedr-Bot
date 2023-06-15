@@ -2,7 +2,7 @@ import requests
 import json
 import secrets
 import wget
-
+import gofile
 
 def retrieve_file_link(cookie, folder_id):
     # Retrieve the file link from the Seedr API for the specified folder ID
@@ -21,6 +21,9 @@ def download_file(url, output_name):
     # Download a file from the specified URL and save it with the given output name
     return wget.download(url, out=output_name)
 
+def upload_file(file_name):
+    response = gofile.uploadFile(file=file_name)
+    return response['downloadPage']
 
 def convert_size(size, unit):
     # Convert the given size to the specified unit
