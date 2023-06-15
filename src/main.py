@@ -2,7 +2,8 @@ from flask import Flask, request
 import time
 import os
 import telebot
-from helper.account import account, cookie, retrieve_file_link, download
+from helper.account import account, cookie
+from helper.func import retrieve_file_link, download
 import requests
 import gofile
 
