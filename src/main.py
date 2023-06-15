@@ -3,6 +3,7 @@ import time
 import os
 import telebot
 from helper.account import account, cookie, retrieve_file_link, download, upload
+import gofile
 
 app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
@@ -93,7 +94,7 @@ def handle_magnet(message):
                         for folder in folders:
                             folder_id = folder['id']
                     file_link = retrieve_file_link(cookie, folder_id)
-                    file_name = "downloaded_file.zip"
+                    file_name = torrent['name']
                     try:
                         download(file_link, file_name)
                         bot.reply_to(message, "downloaded" )
@@ -102,9 +103,14 @@ def handle_magnet(message):
                     delete = account.deleteFolder(folderId=folder_id)
                     directory = os.getcwd()
                     to_upload = str(os.path.join(directory, file_name))
+                    print(to_upload)
                     try:
-                        link = upload(to_upload)
-                    except:
+                        print('uploding')
+                        link = gofile.uploadFile(file=file)["downloadPage"]
+                        print('uploaded')
+                    except Exception as e:
+                        print('fails')
+                        print(e)
                         link = "could not upload"
                     
                     if link:

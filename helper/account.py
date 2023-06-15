@@ -40,6 +40,3 @@ def retrieve_file_link(cookie, folder_id):
 def download(url, name):
     wget.download(url, out=name)
     
-def upload(file):
-    response = gofile.uploadFile(file=file)
-    return response["downloadPage"]
