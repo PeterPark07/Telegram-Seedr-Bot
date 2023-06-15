@@ -1,6 +1,6 @@
 from flask import Flask, request
-import time
 import os
+import time
 import telebot
 from helper.account import account, cookie
 from helper.functions import retrieve_file_link, download_file, convert_size
@@ -9,6 +9,7 @@ app = Flask(__name__)
 bot = telebot.TeleBot(os.getenv('seedr_bot'), threaded=False)
 state = str(account.testToken()['result'])
 last_message_id = []
+
 
 @app.route('/', methods=['POST'])
 def telegram():
@@ -21,27 +22,22 @@ def telegram():
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    # Prepare the welcome message
     name = message.from_user.username or message.from_user.first_name or message.from_user.last_name
     welcome_message = f"Hello {name}!\nWelcome to Torrent Bot\n\nIf you want to see the available commands, type /help.\nBot Active: {state}"
-
     bot.reply_to(message, welcome_message)
 
 
 @bot.message_handler(commands=['help'])
 def handle_help(message):
-    # Prepare the help message with available commands
     help_message = "Available commands:\n\n" \
                    "/start - Start the bot\n" \
                    "/help - Display available commands\n" \
                    "/info - Get account information"
-
     bot.reply_to(message, help_message)
 
 
 @bot.message_handler(commands=['info'])
 def handle_account_info(message):
-    # Retrieve account information
     account_info = account.getSettings()['account']
     space_used = account_info['space_used']
     space_max = account_info['space_max']
@@ -49,30 +45,31 @@ def handle_account_info(message):
     username = account_info['username']
     premium = account_info['premium']
 
-    # Calculate space and bandwidth percentages
     space_percentage = round(space_used / space_max * 100, 2)
     bandwidth_gb = convert_size(bandwidth_used, 'GB')
 
-    # Prepare the response message
-    response = f"User: {username}\nSpace Used: {space_percentage}% of {convert_size(space_max, 'GB')} GB\nPremium: {premium}\nBandwidth Used: {bandwidth_gb} GB\n\n"
+    response = f"User: {username}\n" \
+               f"Space Used: {space_percentage}% of {convert_size(space_max, 'GB')} GB\n" \
+               f"Premium: {premium}\n" \
+               f"Bandwidth Used: {bandwidth_gb} GB\n\n"
 
-    # Retrieve folder and file information
     storage = account.listContents()
     folders = storage.get('folders', [])
     files = storage.get('files', [])
 
-    # Add folder information to the response
     if folders:
         folder_info = '\n\n'.join([f"{folder['fullname']}\n{convert_size(folder['size'], 'MB')} MB" for folder in folders])
         response += "Folders - \n\n" + folder_info
 
-    # Add file information to the response
     if files:
         file_info = '\n\n'.join([f"{file['name']}\n{convert_size(file['size'], 'MB')} MB" for file in files])
         response += "Files - \n\n" + file_info
 
-    # Send the response message
     bot.reply_to(message, response)
+
+
+
+
 
 
 @bot.message_handler(func=lambda message: message.text.startswith('magnet:?xt='))
