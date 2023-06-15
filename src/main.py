@@ -172,9 +172,6 @@ def handle_magnet(message):
         response = f"Download failed\n\n{add['result']}"
     bot.reply_to(message, response)
 
-
-
-
 @bot.message_handler(func=lambda message: True)
 def handle_other_messages(message):
     m = message.text
