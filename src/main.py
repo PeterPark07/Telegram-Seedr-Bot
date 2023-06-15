@@ -121,49 +121,45 @@ def handle_magnet(message):
         storage = account.listContents()
         torrents = storage['torrents']
 
-        if torrents:
-            for torrent in torrents:
-                if torrent['warnings'] != '[]' and torrent['warnings']:
-                    # Delete defective torrents
-                    result = account.deleteTorrent(torrentId=torrent['id'])
-                    response = 'Defective Torrent.\n\n'
-                    warnings = torrent['warnings'].strip('[]').replace('"', '').split(',')
-                    for warn in warnings:
-                        response += f"{warn}\n"
-                else:
-                    response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {convert_size(torrent['size'], 'MB')} MB"
-                    bot.reply_to(message, response)
-                    while torrents:
-                        time.sleep(10)
-                        torrents = account.listContents()['torrents']
-                    
-                    folders = account.listContents()['folders']
-                    
-                    if folders:
-                        for folder in folders:
-                            folder_id = folder['id']
-                    
-                    file_link = retrieve_file_link(cookie, folder_id)
-                    file_name = torrent['name'] + '.zip'
+        for torrent in torrents:
+            if torrent['warnings'] != '[]' and torrent['warnings']:
+                # Delete defective torrents
+                result = account.deleteTorrent(torrentId=torrent['id'])
+                response = 'Defective Torrent.\n\n'
+                warnings = torrent['warnings'].strip('[]').replace('"', '').split(',')
+                for warn in warnings:
+                    response += f"{warn}\n"
+            else:
+                response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {convert_size(torrent['size'], 'MB')} MB"
+                bot.reply_to(message, response)
+                while torrents:
+                    time.sleep(10)
+                    torrents = account.listContents()['torrents']
+                
+                folders = account.listContents()['folders']
+                
+                if folders:
+                    for folder in folders:
+                        folder_id = folder['id']
+                
+                file_link = retrieve_file_link(cookie, folder_id)
+                file_name = torrent['name'] + '.zip'
 
-                    try:
-                        bot.reply_to(message, f"Downloading...")
-                        download_file(file_link, file_name)
-                        bot.reply_to(message, "Downloaded.")
-                    except Exception as e:
-                        bot.reply_to(message, f"Not downloaded.\n{e}")
-                        return
+                try:
+                    bot.reply_to(message, f"Downloading...")
+                    downloaded = download_file(file_link, file_name)
+                    bot.reply_to(message, f"Downloaded.\n{downloaded}")
+                except Exception as e:
+                    bot.reply_to(message, f"Not downloaded.\n{e}")
+                    return
 
-                    delete = account.deleteFolder(folderId=folder_id)
-                    directory = os.getcwd()
-                    to_upload = str(os.path.join(directory, file_name))
-                    bot.reply_to(message, to_upload)
+                delete = account.deleteFolder(folderId=folder_id)
+                directory = os.getcwd()
+                to_upload = str(os.path.join(directory, file_name))
+                bot.reply_to(message, to_upload)
     else:
         response = f"Download failed\n\n{add['result']}"
     bot.reply_to(message, response)
-
-
-
 
 
 
