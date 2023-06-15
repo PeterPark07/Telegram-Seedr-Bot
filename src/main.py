@@ -110,7 +110,7 @@ def handle_magnet(message):
     if message.message_id in last_message_id:
         return
     last_message_id.append(message.message_id)
-
+    return
     magnet = message.text
     # Add the torrent using the provided magnet link
     add = account.addTorrent(magnetLink=magnet)
