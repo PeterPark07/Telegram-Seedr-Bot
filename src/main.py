@@ -95,7 +95,7 @@ def handle_magnet(message):
                         for folder in folders:
                             folder_id = folder['id']
                     file_link = retrieve_file_link(cookie, folder_id)
-                    file_name = torrent['name']
+                    file_name = torrent['name'] + '.zip'
                     try:
                         bot.reply_to(message, f"Downloading, {file_link}, {file_name}")
                         download(file_link, file_name)
