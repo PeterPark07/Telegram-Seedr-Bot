@@ -115,7 +115,7 @@ def handle_magnet(message):
     add = account.addTorrent(magnetLink=magnet)
     
     if add['result'] == True:
-        response = f"Torrent Added ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash: {add['torrent_hash']}"
+        response = f"Downloading Torrent ({add['user_torrent_id']})\n\n{add['title']}\n\nTorrent hash: {add['torrent_hash']}"
 
         # Retrieve storage information
         storage = account.listContents()
@@ -146,11 +146,12 @@ def handle_magnet(message):
                 file_name = torrent['name'] + '.zip'
 
                 try:
-                    bot.reply_to(message, f"Downloading...")
+                    wait = bot.reply_to(message, "...")
                     start_time = time.time()
                     downloaded = download_file(file_link, file_name)
                     end_time = time.time()
                     time_taken = end_time - start_time
+                    bot.delete_message(message.chat.id, wait.message_id)
                     bot.reply_to(message, f"Downloaded: {downloaded}\nTime Taken: {time_taken:.2f} seconds")
                 except Exception as e:
                     bot.reply_to(message, f"Not downloaded.\n{e}")
@@ -160,9 +161,10 @@ def handle_magnet(message):
                 delete = account.deleteFolder(folderId=folder_id)
                 
                 try:
-                    bot.reply_to(message, "Uploading..." )
+                    wait = bot.reply_to(message, "Uploading..." )
                     link = upload_file(file_name)
-                    bot.reply_to(message, f"Uploaded.\n{link}" )
+                    bot.delete_message(message.chat.id, wait.message_id)
+                    bot.reply_to(message, link )
                 except:
                     bot.reply_to(message, "Not Uploaded." )
                 return
