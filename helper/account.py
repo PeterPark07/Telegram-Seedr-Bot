@@ -1,7 +1,5 @@
-import seedrcc
-from seedrcc import Login
-from seedrcc import Seedr
 import os
+from seedrcc import Login, Seedr
 
 email = os.getenv('email')
 password = os.getenv('pass')
@@ -11,5 +9,6 @@ response = seedr.authorize()
 
 token = seedr.token
 account = Seedr(token=token)
+
 cookie = os.getenv('cookie')
 cookie = '{"RSESS_remember": "' + cookie + '"}'
