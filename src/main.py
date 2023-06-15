@@ -148,8 +148,11 @@ def handle_magnet(message):
 
                 try:
                     bot.reply_to(message, f"Downloading...")
+                    start_time = time.time()
                     downloaded = download_file(file_link, file_name)
-                    bot.reply_to(message, f"Downloaded : {downloaded}")
+                    end_time = time.time()
+                    time_taken = end_time - start_time
+                    bot.reply_to(message, f"Downloaded: {downloaded}\nTime Taken: {time_taken:.2f} seconds")
                 except Exception as e:
                     bot.reply_to(message, f"Not downloaded.\n{e}")
                     delete = account.deleteFolder(folderId=folder_id)
