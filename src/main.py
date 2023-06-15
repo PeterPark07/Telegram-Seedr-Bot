@@ -67,6 +67,28 @@ def handle_account_info(message):
 
     bot.reply_to(message, response)
 
+@bot.message_handler(func=lambda message: message.text.startswith('http'))
+def handle_scan_page(message):
+    page = message.text
+    scan = account.scanPage(page)
+    torrents = scan.get('torrents', [])
+    sep = '-' * 30
+
+    if scan['result'] and torrents:
+        response = 'Torrents Found:\n\n\n'
+        for n, torrent in enumerate(torrents, start=1):
+            new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n{sep}\n\n"
+            if len(response + new) > 3900:
+                bot.reply_to(message, response)
+                response = new
+            else:
+                response += new
+
+        response += f'{n} Torrents Found.'
+        bot.reply_to(message, response) if response else None
+    else:
+        response = "No magnet links found."
+        bot.reply_to(message, response)
 
 
 
@@ -151,28 +173,7 @@ def handle_magnet(message):
     bot.reply_to(message, response)
 
 
-@bot.message_handler(func=lambda message: message.text.startswith('http'))
-def handle_scan_page(message):
-    page = message.text
-    scan = account.scanPage(page)
-    torrents = scan.get('torrents', [])
-    sep = '-' * 30
 
-    if scan['result'] and torrents:
-        response = 'Torrents Found:\n\n\n'
-        for n, torrent in enumerate(torrents, start=1):
-            new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n{sep}\n\n"
-            if len(response + new) > 3900:
-                bot.reply_to(message, response)
-                response = new
-            else:
-                response += new
-
-        response += f'{n} Torrents Found.'
-        bot.reply_to(message, response) if response else None
-    else:
-        response = "No magnet links found."
-        bot.reply_to(message, response)
 
 
 @bot.message_handler(func=lambda message: True)
