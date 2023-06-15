@@ -70,11 +70,12 @@ def handle_account_info(message):
 @bot.message_handler(func=lambda message: message.text.startswith('http'))
 def handle_scan_page(message):
     page = message.text
+    bot.reply_to(message, 'Scanning Page...')
     scan = account.scanPage(page)
-    torrents = scan.get('torrents', [])
+    torrents = scan['torrents']
     sep = '-' * 30
 
-    if scan['result'] and torrents:
+    if scan['result'] == True and torrents:
         response = 'Torrents Found:\n\n\n'
         for n, torrent in enumerate(torrents, start=1):
             new = f"{n}. {torrent['title']}\n\n{torrent['magnet']}\n\n{sep}\n\n"
