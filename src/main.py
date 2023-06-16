@@ -149,6 +149,7 @@ def handle_magnet(message):
                 try:
                     wait = bot.reply_to(message, "...")
                     start_time = time.time()
+                    wait = bot.reply_to(message, file_link)
                     downloaded = download_file(file_link, file_name)
                     end_time = time.time()
                     time_taken = end_time - start_time
