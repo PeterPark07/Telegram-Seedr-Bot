@@ -144,33 +144,29 @@ def handle_magnet(message):
                         folder_id = folder['id']
                 
                 file_link = retrieve_file_link(cookie, folder_id)
+                if not file_link :
+                    delete = account.deleteFolder(folderId=folder_id)
+                    bot.reply_to(message, "Cookie expired.")
+                    return
                 file_name = torrent['name'] + '.zip'
-                try:
-                    if not file_link :
-                        bot.reply_to(message, "Cookie expired.")
-                        return
+                if size < 300:
                     wait = bot.reply_to(message, "...")
                     start_time = time.time()
-
                     downloaded = download_file(file_link, file_name)
                     end_time = time.time()
                     time_taken = end_time - start_time
                     bot.delete_message(message.chat.id, wait.message_id)
                     bot.reply_to(message, f"Downloaded: {downloaded}\nTime Taken: {time_taken:.2f} seconds")
-                except Exception as e:
-                    bot.reply_to(message, f"Not downloaded.\n{e}")
+                else:
+                    bot.reply_to(message, file_link )
                     delete = account.deleteFolder(folderId=folder_id)
                     return
 
                 delete = account.deleteFolder(folderId=folder_id)
-                
-                if size < 300 :
-                    wait = bot.reply_to(message, "Uploading..." )
-                    link = upload_file(file_name)
-                    bot.delete_message(message.chat.id, wait.message_id)
-                    bot.reply_to(message, link )
-                else :
-                    bot.reply_to(message, file_link )
+                wait = bot.reply_to(message, "Uploading..." )
+                link = upload_file(file_name)
+                bot.delete_message(message.chat.id, wait.message_id)
+                bot.reply_to(message, link )
                 return
     else:
         response = f"Download failed\n\n{add['result']}"
