@@ -149,7 +149,7 @@ def handle_magnet(message):
                     bot.reply_to(message, "Cookie expired.")
                     return
                 file_name = torrent['name'] + '.zip'
-                if size < 300:
+                if size < 200:
                     wait = bot.reply_to(message, "...")
                     start_time = time.time()
                     downloaded = download_file(file_link, file_name)
