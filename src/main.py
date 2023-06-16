@@ -146,7 +146,7 @@ def handle_magnet(message):
                 file_link = retrieve_file_link(cookie, folder_id)
                 file_name = torrent['name'] + '.zip'
                 try:
-                    if file_link =='':
+                    if not file_link :
                         bot.reply_to(message, "Cookie expired.")
                         return
                     wait = bot.reply_to(message, "...")
