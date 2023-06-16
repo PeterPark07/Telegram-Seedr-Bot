@@ -130,7 +130,8 @@ def handle_magnet(message):
                 for warn in warnings:
                     response += f"{warn}\n"
             else:
-                response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {convert_size(torrent['size'], 'MB')} MB"
+                size = convert_size(torrent['size'], 'MB')
+                response += f"\n\nQuality: {torrent['torrent_quality']}\n\nSize: {size} MB"
                 bot.reply_to(message, response)
                 while torrents:
                     time.sleep(10)
@@ -160,13 +161,13 @@ def handle_magnet(message):
 
                 delete = account.deleteFolder(folderId=folder_id)
                 
-                try:
+                if size < 300 :
                     wait = bot.reply_to(message, "Uploading..." )
                     link = upload_file(file_name)
                     bot.delete_message(message.chat.id, wait.message_id)
                     bot.reply_to(message, link )
-                except:
-                    bot.reply_to(message, "Not Uploaded." )
+                else :
+                    bot.reply_to(message, file_link )
                 return
     else:
         response = f"Download failed\n\n{add['result']}"
